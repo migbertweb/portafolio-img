@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "EncodeSans";
+    src: url("fonts/EncodeSans.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Burtons";
+    src: url("fonts/Burtons.otf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "BurtonsScript";
+    src: url("fonts/BurtonsScript.otf");
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Brotherline";
+    src: url("fonts/Brotherline.ttf");
+    font-weight: 600; /* Ajusta según el peso de la fuente */
+    font-style: normal; /* Ajusta según el estilo de la fuente */
+}
+
+@font-face {
+    font-family: "Ochitylla";
+    src: url("fonts/Ochitylla.otf");
+    font-weight: normal;
+    font-style: normal;
+}
