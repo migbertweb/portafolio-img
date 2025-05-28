@@ -13,7 +13,7 @@ Mi capacidad de adaptación me permite aprender rápidamente nuevas tecnologías
 
 - **Frontend**: Livewire, Alpine.js, TailwindCSS, Vite.
 - **Backend**: PHP (Laravel).
-- **Infraestructura**: Docker, Servidor VPS.
+- **Infraestructura**: Kubernetes, GitOps y ArgoCD, Servidor VPS.
 - **Otros**: MySQL, Font Awesome, Neovim.
 
 ---

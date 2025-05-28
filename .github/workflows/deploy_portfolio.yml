@@ -50,7 +50,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ env.HARBOR_HOST }}  # URL del registro
-          username: ${{ secrets.HARBOR_USER }}  # Usuario desde secrets
+          username: ${{ secrets.HARBOR_USERNAME }}  # Usuario desde secrets
           password: ${{ secrets.HARBOR_TOKEN }} # Token/contraseña desde secrets
 
       # Paso 6: Construir y subir la imagen
