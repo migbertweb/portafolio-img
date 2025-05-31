@@ -1,6 +1,6 @@
 # Nombre del workflow que aparecerá en GitHub Actions
 name: Build and Push to Harbor
-
+# migbert
 # Define cuándo se ejecutará el workflow:
 on:
   push:
@@ -59,5 +59,6 @@ jobs:
         with:
           context: .                # Usa el directorio actual como contexto de construcción
           push: true               # Habilita el push después del build
+          platforms: linux/amd64,linux/arm64  # Construye para múltiples arquitecturas
           tags: ${{ steps.meta.outputs.tags }}  # Usa los tags generados en el paso 'meta'
           labels: ${{ steps.meta.outputs.labels }} # Usa labels generados en el paso 'meta'
