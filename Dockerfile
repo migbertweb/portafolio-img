@@ -55,10 +55,6 @@ RUN apk add --no-cache \
   oniguruma-dev \
   libxml2-dev \
   zip \
-  jpegoptim \
-  optipng \
-  pngquant \
-  gifsicle \
   unzip \
   git \
   nodejs \
