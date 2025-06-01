@@ -24,7 +24,7 @@ RUN composer run-script post-autoload-dump
 # RUN npm install && npm run build
 
 # Etapa final
-FROM php:8.2-fpm
+FROM php:8.2-fpm-alpine
 
 # Set working directory
 WORKDIR /var/www
@@ -41,27 +41,39 @@ COPY --from=builder /app/vendor ./vendor
 COPY . .
 
 RUN chown -R www-data:www-data /var/www
-# Install dependencies
-RUN apt-get update && apt-get install -y \
-  build-essential \
+
+# Instala dependencias principales (equivalente Alpine de tus paquetes Debian)
+RUN apk add --no-cache \
+  build-base \
   libpng-dev \
-  libjpeg62-turbo-dev \
-  libfreetype6-dev \
-  libonig-dev \
+  libjpeg-turbo-dev \
+  freetype-dev \
+  oniguruma-dev \
   libxml2-dev \
-  locales \
   zip \
-  jpegoptim optipng pngquant gifsicle \
-  vim \
+  jpegoptim \
+  optipng \
+  pngquant \
+  gifsicle \
   unzip \
   git \
   nodejs \
   npm \
-  ranger \
   curl
 
-# Install extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd && docker-php-source delete
+# Configura extensiones PHP (mucho más rápido que en Debian)
+RUN docker-php-ext-configure gd --with-jpeg --with-freetype && \
+  docker-php-ext-install -j$(nproc) \
+  pdo_mysql \
+  mbstring \
+  exif \
+  pcntl \
+  bcmath \
+  gd
+
+# Limpieza (opcional pero recomendado)
+RUN rm -rf /var/cache/apk/* && \
+  docker-php-source delete
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
