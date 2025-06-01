@@ -1,8 +1,8 @@
 # Etapa de construcción
 FROM composer:2.6 AS builder
 WORKDIR /app
-COPY . .
-RUN composer install --no-dev --optimize-autoloader  # Instala dependencias
+COPY composer.json composer.lock ./
+RUN mkdir -p vendor && composer install --no-dev --optimize-autoloader  # Instala dependencias
 
 FROM node:18 AS node
 WORKDIR /app
@@ -16,6 +16,8 @@ FROM php:8.2-fpm
 # Set working directory
 WORKDIR /var/www
 
+# Asegúrate de que los directorios destino existan
+RUN mkdir -p vendor public/build
 
 # Copia dependencias y assets compilados
 COPY --from=composer /app/vendor ./vendor
