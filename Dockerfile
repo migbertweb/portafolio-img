@@ -15,13 +15,13 @@ COPY . .
 RUN composer run-script post-autoload-dump
 
 # Etapa de construcción de Node.js
-FROM node:18 AS node
-WORKDIR /app
-COPY package.json package-lock.json ./
-COPY resources ./resources
-COPY public ./public  
-# ¡Asegúrate de copiar la carpeta public con index.html!
-RUN npm install && npm run build
+# FROM node:18 AS node
+# WORKDIR /app
+# COPY package.json package-lock.json ./
+# COPY resources ./resources
+# COPY public ./public  
+# # ¡Asegúrate de copiar la carpeta public con index.html!
+# RUN npm install && npm run build
 
 # Etapa final
 FROM php:8.2-fpm
