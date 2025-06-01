@@ -2,7 +2,7 @@
 FROM composer:2.6 AS builder
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN mkdir -p vendor && composer install --no-dev --optimize-autoloader  # Instala dependencias
+RUN composer install --no-dev --optimize-autoloader
 
 FROM node:18 AS node
 WORKDIR /app
@@ -20,7 +20,7 @@ WORKDIR /var/www
 RUN mkdir -p vendor public/build
 
 # Copia dependencias y assets compilados
-COPY --from=composer /app/vendor ./vendor
+COPY --from=builder /app/vendor ./vendor
 COPY --from=node /app/public/build ./public/build
 
 # Copia el código de la aplicación
