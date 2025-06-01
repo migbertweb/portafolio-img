@@ -75,13 +75,13 @@ RUN docker-php-ext-configure gd --with-jpeg --with-freetype && \
 RUN rm -rf /var/cache/apk/* && \
   docker-php-source delete
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# Limpiar cache de paquetes apk
+RUN rm -rf /var/cache/apk/*
 
-# Add user for laravel application
-RUN groupadd -g 1000 www && useradd -u 1000 -ms /bin/bash -g www www
+# Crear usuario y grupo www con UID y GID 1000
+RUN addgroup -g 1000 www && adduser -u 1000 -D -s /bin/sh -G www www
 
-# Copy existing application directory permissions
+# Copiar archivos con permisos de www:www
 COPY --chown=www:www . /var/www
 
 # Change current user to www
