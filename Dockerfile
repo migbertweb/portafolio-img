@@ -30,11 +30,12 @@ FROM php:8.2-fpm
 WORKDIR /var/www
 
 # Asegúrate de que los directorios destino existan
-RUN mkdir -p vendor public/build
+RUN mkdir -p vendor 
+# public/build
 
 # Copia dependencias y assets compilados
 COPY --from=builder /app/vendor ./vendor
-COPY --from=node /app/public/build ./public/build
+# COPY --from=node /app/public/build ./public/build
 
 # Copia el código de la aplicación
 COPY . .
