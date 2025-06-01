@@ -2,8 +2,19 @@
 FROM composer:2.6 AS builder
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader
+# 1. Primero copia SOLO los archivos necesarios para composer
+COPY composer.json composer.lock ./
 
+# 2. Instala dependencias SIN ejecutar scripts
+RUN composer install --no-dev --no-scripts --optimize-autoloader --ignore-platform-reqs
+
+# 3. Copia el resto de los archivos (incluyendo artisan)
+COPY . .
+
+# 4. Ahora ejecuta los scripts de Laravel
+RUN composer run-script post-autoload-dump
+
+# Etapa de construcción de Node.js
 FROM node:18 AS node
 WORKDIR /app
 COPY package.json package-lock.json ./
