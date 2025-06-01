@@ -37,6 +37,10 @@ RUN mkdir -p vendor
 COPY --from=builder /app/vendor ./vendor
 # COPY --from=node /app/public/build ./public/build
 
+COPY entrypoint.sh /usr/local/bin/
+# Permisos y configuración
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Copia el código de la aplicación
 COPY . .
 
@@ -87,6 +91,7 @@ COPY --chown=www:www . /var/www
 # Change current user to www
 USER www
 
+ENTRYPOINT ["entrypoint.sh"]
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
