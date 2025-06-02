@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Genera el archivo .env
-cat > /var/www/html/.env <<EOF
+cat > /var/www/.env <<EOF
 APP_NAME=Laravel
 APP_ENV=production
 APP_KEY=${APP_KEY}
@@ -49,7 +49,7 @@ php artisan migrate --force
 # optimize Laravel
 php artisan optimize
 # Configura permisos para el directorio de almacenamiento y caché
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 # Inicia PHP-FPM
 exec php-fpm
