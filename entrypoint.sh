@@ -7,18 +7,18 @@ APP_ENV=production
 APP_KEY=${APP_KEY}
 APP_DEBUG=false
 
-DB_CONNECTION=sqlite
-# DB_HOST=mysql-service
-# DB_DATABASE=laravel_db
-# DB_USERNAME=root
-# DB_PASSWORD=${DB_PASSWORD}
+DB_CONNECTION=mariadb
+DB_HOST=mariadb-service.mysql-ns.svc.cluster.local
+DB_DATABASE=laravel_db
+DB_USERNAME=root
+DB_PASSWORD=${DB_PASSWORD}
 
-# REDIS_HOST=redis-service
-# REDIS_PASSWORD=${REDIS_PASSWORD:-}
+REDIS_HOST=redis-service
+REDIS_PASSWORD=${REDIS_PASSWORD}
 
-# SESSION_DRIVER=redis
-# CACHE_DRIVER=redis
-# QUEUE_CONNECTION=redis
+SESSION_DRIVER=redis
+CACHE_DRIVER=redis
+QUEUE_CONNECTION=redis
 
 # Configuración de Mail (opcional)
 # MAIL_MAILER=smtp
