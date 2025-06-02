@@ -1,50 +1,48 @@
 # Etapa de construcción
+######## PHP COMPOSER #########
 FROM composer:2.6 AS builder
 WORKDIR /app
 COPY composer.json composer.lock ./
 # 1. Primero copia SOLO los archivos necesarios para composer
 COPY composer.json composer.lock ./
-
 # 2. Instala dependencias SIN ejecutar scripts
 RUN composer install --no-dev --no-scripts --optimize-autoloader --ignore-platform-reqs
-
 # 3. Copia el resto de los archivos (incluyendo artisan)
 COPY . .
-
 # 4. Ahora ejecuta los scripts de Laravel
 RUN composer run-script post-autoload-dump
-
-# Etapa de construcción de Node.js
-# FROM node:18 AS node
-# WORKDIR /app
-# COPY package.json package-lock.json ./
-# COPY resources ./resources
-# COPY public ./public  
-# # ¡Asegúrate de copiar la carpeta public con index.html!
-# RUN npm install && npm run build
-
+######### NODE.JS #########
+# --- Nueva etapa para Node.js (compilación de assets) ---
+FROM node:18 AS node
+WORKDIR /app
+COPY --from=builder /app .
+# Copia solo lo necesario para npm (optimización)
+COPY package.json package-lock.json vite.config.js ./
+COPY resources ./resources
+RUN npm install && npm run build
+########## PHP FPM #########
+# --- Etapa final de PHP FPM ---
+# Utiliza la imagen base de PHP FPM
 # Etapa final
 FROM php:8.2-fpm-alpine
-
 # Set working directory
 WORKDIR /var/www
-
 # Asegúrate de que los directorios destino existan
 RUN mkdir -p vendor 
 # public/build
-
-# Copia dependencias y assets compilados
+# Copia dependencias de Composer desde la etapa de construcción
 COPY --from=builder /app/vendor ./vendor
-# COPY --from=node /app/public/build ./public/build
+# Copia assets compilados desde la etapa Node.js
+COPY --from=node /app/public/build ./public/build 
 
-COPY entrypoint.sh /usr/local/bin/
-# Permisos y configuración
+# Reemplaza las líneas de creación de usuario con:
+RUN addgroup -g 1000 www-data && \
+  adduser -u 1000 -D -s /bin/sh -G www-data www-data
+# Primero copia todo con permisos correctos
+COPY --chown=www-data:www-data . /var/www
+# Luego copia el entrypoint
+COPY --chown=www-data:www-data entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Copia el código de la aplicación
-COPY . .
-
-RUN chown -R www-data:www-data /var/www
 
 # Instala dependencias principales (equivalente Alpine de tus paquetes Debian)
 RUN apk add --no-cache \
@@ -60,7 +58,6 @@ RUN apk add --no-cache \
   nodejs \
   npm \
   curl
-
 # Configura extensiones PHP (mucho más rápido que en Debian)
 RUN docker-php-ext-configure gd --with-jpeg --with-freetype && \
   docker-php-ext-install -j$(nproc) \
@@ -70,22 +67,9 @@ RUN docker-php-ext-configure gd --with-jpeg --with-freetype && \
   pcntl \
   bcmath \
   gd
-
 # Limpieza (opcional pero recomendado)
 RUN rm -rf /var/cache/apk/* && \
   docker-php-source delete
-
-# Limpiar cache de paquetes apk
-RUN rm -rf /var/cache/apk/*
-
-# Crear usuario y grupo www con UID y GID 1000
-RUN addgroup -g 1000 www && adduser -u 1000 -D -s /bin/sh -G www www
-
-# Copiar archivos con permisos de www:www
-COPY --chown=www:www . /var/www
-
-# Change current user to www
-USER www
 
 ENTRYPOINT ["entrypoint.sh"]
 # Expose port 9000 and start php-fpm server
