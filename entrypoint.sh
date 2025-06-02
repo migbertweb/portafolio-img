@@ -2,10 +2,16 @@
 
 # Genera el archivo .env
 cat > /var/www/.env <<EOF
-APP_NAME=Laravel
+APP_NAME="Migbert Yanez"
 APP_ENV=production
 APP_KEY=${APP_KEY}
 APP_DEBUG=false
+APP_TIMEZONE=America/Sao_Paulo
+APP_URL=http://localhost
+
+APP_LOCALE=pt
+APP_FALLBACK_LOCALE=en
+APP_FAKER_LOCALE=pt_BR
 
 DB_CONNECTION=mariadb
 DB_HOST=mariadb-service.mysql-ns.svc.cluster.local
