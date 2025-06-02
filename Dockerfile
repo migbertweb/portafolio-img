@@ -27,21 +27,6 @@ RUN npm install && npm run build
 FROM php:8.2-fpm-alpine
 # Set working directory
 WORKDIR /var/www
-# Asegúrate de que los directorios destino existan
-RUN mkdir -p vendor 
-# public/build
-# Copia dependencias de Composer desde la etapa de construcción
-COPY --from=builder /app/vendor ./vendor
-# Copia assets compilados desde la etapa Node.js
-COPY --from=node /app/public/build ./public/build 
-# user y grupo para evitar problemas de permisos
-RUN chown -R www-data:www-data /var/www
-USER www-data
-# Primero copia todo con permisos correctos
-COPY --chown=www-data:www-data . /var/www
-# Luego copia el entrypoint
-COPY --chown=www-data:www-data entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Instala dependencias principales (equivalente Alpine de tus paquetes Debian)
 RUN apk add --no-cache \
@@ -69,6 +54,22 @@ RUN docker-php-ext-configure gd --with-jpeg --with-freetype && \
 # Limpieza (opcional pero recomendado)
 RUN rm -rf /var/cache/apk/* && \
   docker-php-source delete
+
+# Asegúrate de que los directorios destino existan
+RUN mkdir -p vendor 
+# public/build
+# Copia dependencias de Composer desde la etapa de construcción
+COPY --from=builder /app/vendor ./vendor
+# Copia assets compilados desde la etapa Node.js
+COPY --from=node /app/public/build ./public/build 
+# user y grupo para evitar problemas de permisos
+RUN chown -R www-data:www-data /var/www
+USER www-data
+# Primero copia todo con permisos correctos
+COPY --chown=www-data:www-data . /var/www
+# Luego copia el entrypoint
+COPY --chown=www-data:www-data entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["entrypoint.sh"]
 # Expose port 9000 and start php-fpm server
