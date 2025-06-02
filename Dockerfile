@@ -34,10 +34,9 @@ RUN mkdir -p vendor
 COPY --from=builder /app/vendor ./vendor
 # Copia assets compilados desde la etapa Node.js
 COPY --from=node /app/public/build ./public/build 
-
-# Reemplaza las líneas de creación de usuario con:
-RUN addgroup -g 1000 www-data && \
-  adduser -u 1000 -D -s /bin/sh -G www-data www-data
+# user y grupo para evitar problemas de permisos
+RUN chown -R www-data:www-data /var/www
+USER www-data
 # Primero copia todo con permisos correctos
 COPY --chown=www-data:www-data . /var/www
 # Luego copia el entrypoint
