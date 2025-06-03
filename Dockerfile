@@ -29,28 +29,28 @@ FROM migbertweb/php-laravel:8.3-fpm-alpine
 WORKDIR /var/www
 
 # Instala dependencias principales (equivalente Alpine de tus paquetes Debian)
-RUN apk add --no-cache \
-  build-base \
-  libpng-dev \
-  libjpeg-turbo-dev \
-  freetype-dev \
-  oniguruma-dev \
-  libxml2-dev \
-  zip \
-  unzip \
-  git \
-  nodejs \
-  npm \
-  curl
+# RUN apk add --no-cache \
+#   build-base \
+#   libpng-dev \
+#   libjpeg-turbo-dev \
+#   freetype-dev \
+#   oniguruma-dev \
+#   libxml2-dev \
+#   zip \
+#   unzip \
+#   git \
+#   nodejs \
+#   npm \
+#   curl
 # Configura extensiones PHP (mucho más rápido que en Debian)
-RUN docker-php-ext-configure gd --with-jpeg --with-freetype && \
-  docker-php-ext-install -j$(nproc) \
-  pdo_mysql \
-  mbstring \
-  exif \
-  pcntl \
-  bcmath \
-  gd
+# RUN docker-php-ext-configure gd --with-jpeg --with-freetype && \
+#   docker-php-ext-install -j$(nproc) \
+#   pdo_mysql \
+#   mbstring \
+#   exif \
+#   pcntl \
+#   bcmath \
+#   gd
 # Limpieza (opcional pero recomendado)
 RUN rm -rf /var/cache/apk/* && \
   docker-php-source delete
