@@ -24,7 +24,7 @@ RUN npm install && npm run build
 # --- Etapa final de PHP FPM ---
 # Utiliza la imagen base de PHP FPM
 # Etapa final
-FROM php:8.2-fpm-alpine
+FROM migbertweb/php-laravel:8.3-fpm-alpine
 # Set working directory
 WORKDIR /var/www
 
