@@ -39,22 +39,20 @@ EOF
 # composer install --no-dev --optimize-autoloader
 
 # Instala dependencias NPM y compila assets (si existe package.json)
-if [ -f "package.json" ]; then
-  npm install
-  npm run build  # Usa 'dev' en desarrollo (no recomendado para producción)
-fi
+#if [ -f "package.json" ]; then
+#  npm install
+#  npm run build  # Usa 'dev' en desarrollo (no recomendado para producción)
+#fi
 
 # Optimiza Laravel
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
-
-# Ejecuta migraciones (opcional, solo si es necesario)
-php artisan migrate --force
-
 # optimize Laravel
 php artisan optimize
 # Configura permisos para el directorio de almacenamiento y caché
+chown -R www-data:www-data .
+chgrp -R www-data storage bootstrap/cache
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 # Inicia PHP-FPM
