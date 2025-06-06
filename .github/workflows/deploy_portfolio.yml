@@ -4,34 +4,34 @@ name: Build and Push to Harbor
 # Define cuándo se ejecutará el workflow:
 on:
   push:
-    tags:       # Se ejecuta cuando se hace push de un tag
-      - 'v*'    # Solo tags que comienzan con 'v' (v1.0.0, v2.1.3, etc.)
+    tags: # Se ejecuta cuando se hace push de un tag
+      - "v*" # Solo tags que comienzan con 'v' (v1.0.0, v2.1.3, etc.)
     # branches:   # También se ejecuta cuando hay push a:
     #  - master   # la rama main (puedes añadir otras ramas)
 
 # Variables de entorno que se usarán en el workflow
 env:
-  HARBOR_HOST: harbor.migbertweb.site  # URL de tu instancia Harbor
-  HARBOR_PROJECT: prod-registry         # Nombre del proyecto en Harbor
-  IMAGE_NAME: portafolio              # Nombre de la imagen Docker
+  HARBOR_HOST: harbor.migbertweb.site # URL de tu instancia Harbor
+  HARBOR_PROJECT: prod-registry # Nombre del proyecto en Harbor
+  IMAGE_NAME: portafolio # Nombre de la imagen Docker
 
 # Definición de los jobs (tareas) del workflow
 jobs:
-  docker:                            # ID del job (puede tener cualquier nombre)
-    runs-on: ubuntu-latest           # Se ejecuta en un runner con Ubuntu
-    
-    steps:                           # Lista de pasos a ejecutar
+  docker: # ID del job (puede tener cualquier nombre)
+    runs-on: ubuntu-latest # Se ejecuta en un runner con Ubuntu
+
+    steps: # Lista de pasos a ejecutar
       # Paso 1: Obtener el código del repositorio
-      - uses: actions/checkout@v3    # Acción oficial para hacer checkout del código
+      - uses: actions/checkout@v3 # Acción oficial para hacer checkout del código
 
       # Paso 2: Extraer metadatos para la imagen Docker
       - name: Extract Docker metadata
-        id: meta                     # ID para referenciar la salida de este paso
-        uses: docker/metadata-action@v4  # Acción para generar tags y labels automáticos
+        id: meta # ID para referenciar la salida de este paso
+        uses: docker/metadata-action@v4 # Acción para generar tags y labels automáticos
         with:
-          images: |                  # Define el repositorio base de la imagen
+          images: | # Define el repositorio base de la imagen
             ${{ env.HARBOR_HOST }}/${{ env.HARBOR_PROJECT }}/${{ env.IMAGE_NAME }}
-          tags: |                    # Estrategias para generar tags automáticos
+          tags: | # Estrategias para generar tags automáticos
             type=ref,event=branch    # Crea tags con el nombre de la rama
             type=ref,event=pr       # Crea tags para pull requests
             type=semver,pattern={{version}}  # Crea tags con versión semántica completa (v1.2.3)
@@ -39,28 +39,28 @@ jobs:
 
       # Paso 3: Configurar QEMU para builds multi-arquitectura
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2  # Permite construir para diferentes arquitecturas
+        uses: docker/setup-qemu-action@v2 # Permite construir para diferentes arquitecturas
 
       # Paso 4: Configurar Docker Buildx (herramienta de construcción avanzada)
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2  # Configura Buildx para builds más eficientes
+        uses: docker/setup-buildx-action@v2 # Configura Buildx para builds más eficientes
 
       # Paso 5: Iniciar sesión en el registro Harbor
       - name: Login to Harbor
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.HARBOR_HOST }}  # URL del registro
-          username: ${{ secrets.HARBOR_USERNAME }}  # Usuario desde secrets
+          registry: ${{ env.HARBOR_HOST }} # URL del registro
+          username: ${{ secrets.HARBOR_USERNAME }} # Usuario desde secrets
           password: ${{ secrets.HARBOR_TOKEN }} # Token/contraseña desde secrets
 
       # Paso 6: Construir y subir la imagen
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: .                # Usa el directorio actual como contexto de construcción
-          push: true               # Habilita el push después del build
-          platforms: linux/amd64,linux/arm64  # Construye para múltiples arquitecturas
-          tags: ${{ steps.meta.outputs.tags }}  # Usa los tags generados en el paso 'meta'
+          context: . # Usa el directorio actual como contexto de construcción
+          push: true # Habilita el push después del build
+          platforms: linux/amd64,linux/arm64 # Construye para múltiples arquitecturas
+          tags: ${{ steps.meta.outputs.tags }} # Usa los tags generados en el paso 'meta'
           labels: ${{ steps.meta.outputs.labels }} # Usa labels generados en el paso 'meta'
           cache-from: type=gha
           cache-to: type=gha,mode=max

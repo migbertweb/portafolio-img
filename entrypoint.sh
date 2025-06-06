@@ -48,10 +48,10 @@ php artisan view:cache
 # optimize Laravel
 php artisan optimize
 # Configura permisos para el directorio de almacenamiento y caché
-chown -R www-data:www-data .
-chgrp -R www-data storage bootstrap/cache
-chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
-chmod -R 775 /var/www/storage
+# chown -R www-data:www-data .
+# chgrp -R www-data storage bootstrap/cache
+# chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+# chmod -R 775 /var/www/storage
 
 # Inicia PHP-FPM
 exec php-fpm
